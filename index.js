@@ -1,4 +1,5 @@
 // library
+var cors = require('cors')
 const express = require('express');
 const bodyParser = require('body-parser');
 const connection = require('./app/config/db');
@@ -9,6 +10,8 @@ const dotenv = require('dotenv');
 dotenv.config()
 // running express
 const app = express();
+app.use(cors())
+
 app.set('view engine', 'ejs');
 app.get('/', function (req, res) {
     res.render('email/index');

@@ -2,7 +2,7 @@ const router = require('express').Router()
 const categoryController = require('../controllers/category.controller');
 const adminController = require('../controllers/admin.controller');
 const userController = require('../controllers/user.controller')
-const verify = require('../middleware/verifyToken');
+const verify = require('../middleware/access-key');
 
 // routing
 

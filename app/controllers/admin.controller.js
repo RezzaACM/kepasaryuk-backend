@@ -25,7 +25,8 @@ exports.register = async (req, res, next) => {
 
             const user = new Admin({
                 username: req.body.username,
-                password: hashPassword
+                password: hashPassword,
+                // remember_token: process.env.REMEMBER_TOKEN
             })
 
             Admin.register(user, (err, data) => {
@@ -37,7 +38,7 @@ exports.register = async (req, res, next) => {
                     res.status(201).send({
                         status_code: 201,
                         status_message: 'Success create new User',
-                        data: data
+                        data: data.username
                     })
             })
         }
@@ -49,14 +50,12 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res) => {
     Admin.findByUsername(req.body.username, async (err, data) => {
         if (data) {
-            const validPass = await bcrypt.compare(req.body.password, data.password) 
+            const validPass = await bcrypt.compare(req.body.password, data.password)
             if (!validPass) return res.status(400).send('Invalid Password') //checking password
 
             const token = jwt.sign({
                 id: data.id
-            }, process.env.TOKEN_SECRET,{
-                expiresIn: '1d' //expiry in 1 day
-            })
+            }, process.env.TOKEN_SECRET)
 
             res.header('auth-token', token) //response header
             res.json({

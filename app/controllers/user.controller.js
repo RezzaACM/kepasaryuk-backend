@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const jwt = require('jsonwebtoken');
 const {
     registerUserValidate,
     loginUserValidate
@@ -100,10 +101,31 @@ exports.login = async (req, res) => {
             const validPass = await bcrypt.compare(req.body.password, data.password)
             if (!validPass) return res.status(400).send('Password inCorrect')
 
+            const token = jwt.sign({
+                id: data.id
+            }, process.env.TOKEN_SECRET, {
+                expiresIn: '7d'
+            })
+
             res.json({
                 'status_code': 200,
                 'message': 'Login Success',
-                'data': data
+                'data': {
+                    'id': data.id,
+                    'name': data.name,
+                    'username': data.username,
+                    'email': data.email,
+                    'phone': data.phone,
+                    'country': data.country,
+                    'province': data.province,
+                    'city': data.city,
+                    'postal_code': data.postal_code,
+                    'detail_address': data.detail_address,
+                    'status': data.status,
+                    'profile': data.profile,
+                    'remember_token': data.remember_token,
+                },
+                'access_token': token
             })
         } else {
             return res.status(400).send('Email inCorrect')

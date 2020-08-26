@@ -4,6 +4,7 @@ const sql = require('../config/db');
 const Admin = function (user) {
     this.username = user.username
     this.password = user.password
+    // this.remember_token = user.remember_token
 }
 
 // register
@@ -30,6 +31,28 @@ Admin.register = (newUser, result) => {
 // find by username
 Admin.findByUsername = (username, result) => {
     sql.query(`SELECT * FROM admin WHERE username = '${username}'`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+
+        if (res.length) {
+            console.log("found admin: ", res[0]);
+            result(null, res[0]);
+            return;
+        }
+
+        // not found Customer with the id
+        result({
+            kind: "not_found"
+        }, null);
+    })
+}
+
+// find by token
+Admin.findToken = (token, result) => {
+    sql.query(`SELECT * FROM admin WHERE remember_token = '${token}' `, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
